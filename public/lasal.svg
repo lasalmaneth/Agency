@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Lasal Jayasinghe">
+  <defs>
+    <linearGradient id="g" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#6af0ff" />
+      <stop offset="100%" stop-color="#ffb347" />
+    </linearGradient>
+  </defs>
+  <rect width="200" height="200" rx="24" fill="#0b1222" />
+  <rect x="8" y="8" width="184" height="184" rx="20" fill="url(#g)" opacity="0.35" />
+  <rect x="20" y="20" width="160" height="160" rx="18" fill="rgba(12,18,34,0.92)" />
+  <text x="50%" y="55%" text-anchor="middle" fill="#e8efff" font-family="'Manrope', 'Segoe UI', sans-serif" font-size="82" font-weight="700" dy="10">LJ</text>
+</svg>

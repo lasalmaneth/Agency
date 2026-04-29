@@ -1,0 +1,57 @@
+---
+import '../styles/global.css';
+
+const {
+  title = 'BrightArc Energy',
+  description = 'Reliable batteries, torches, and LED lighting for homes and businesses.'
+} = Astro.props;
+---
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+  </head>
+  <body>
+    <div class="shell">
+      <header class="site-header">
+        <div class="logo">
+          <span class="dot" />
+          <span>BrightArc Energy</span>
+        </div>
+        <div class="nav-links">
+          <span>Catalog</span>
+          <span>About</span>
+          <span>Contact</span>
+        </div>
+      </header>
+    </div>
+    <main class="shell">
+      <slot />
+    </main>
+    <footer>
+      <div class="shell">
+        <div class="footer-row">
+          <div>
+            <strong>BrightArc Energy</strong><br />
+            Batteries, torches, LED fittings, and power accessories.
+          </div>
+          <div>
+            <div>Phone: +91-98765-43210</div>
+            <div>Email: hello@brightarc.in</div>
+            <div>Mon-Sat, 9:30 AM - 7:30 PM</div>
+          </div>
+          <div class="footer-credit">
+            <img src="/lasal.jpg" onerror="this.src='/lasal.svg'" alt="Lasal Jayasinghe" loading="lazy" />
+            <div class="byline">
+              <strong>Lasal Jayasinghe</strong>
+              <span>Software developed by</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

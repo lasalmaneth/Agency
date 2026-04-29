@@ -1,0 +1,17 @@
+---
+import type { Product } from '../data/products';
+
+const { product } = Astro.props as { product: Product };
+---
+<article class="card product-card" data-category={product.category}>
+  <div class="badge">{product.category}</div>
+  <h3>{product.name}</h3>
+  {product.highlight && <p class="stock" style="color: var(--accent); font-weight: 600;">{product.highlight}</p>}
+  <p class="price">{product.price}</p>
+  <p class="stock">Stock: {product.stock}</p>
+  <ul class="specs">
+    {product.specs.map((spec) => (
+      <li>{spec}</li>
+    ))}
+  </ul>
+</article>
