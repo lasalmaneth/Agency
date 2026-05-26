@@ -2,7 +2,7 @@
 import '../styles/global.css';
 
 const {
-  title = 'BrightArc Energy',
+  title = 'JAYASINGHE & Co.',
   description = 'Reliable batteries, torches, and LED lighting for homes and businesses.'
 } = Astro.props;
 ---
@@ -20,7 +20,8 @@ const {
           if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
             return localStorage.getItem('theme');
           }
-          return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+          // Default to light
+          return 'light';
         };
         const theme = getTheme();
         document.documentElement.setAttribute('data-theme', theme);
@@ -32,15 +33,18 @@ const {
       <header class="site-header">
         <div class="logo">
           <span class="dot" />
-          <span>BrightArc Energy</span>
+          <span>JAYASINGHE & Co.</span>
         </div>
         <div class="nav-links">
-          <span>Catalog</span>
-          <span>About</span>
-          <span>Contact</span>
-          <button id="theme-toggle" class="theme-toggle" aria-label="Toggle Theme">
-            <span class="theme-icon">🌙</span>
-          </button>
+          <a href="/catalog">Catalog</a>
+          <a href="/about">About</a>
+          <a href="/contact">Contact</a>
+          <div id="theme-toggle-pill" class="theme-pill-toggle" aria-label="Toggle Theme">
+            <div class="toggle-knob">
+              <span id="knob-icon">☀️</span>
+            </div>
+            <span id="toggle-text" class="toggle-label">Night</span>
+          </div>
         </div>
       </header>
     </div>
@@ -51,12 +55,12 @@ const {
       <div class="shell">
         <div class="footer-row">
           <div>
-            <strong>BrightArc Energy</strong><br />
+            <strong>JAYASINGHE & Co.</strong><br />
             Batteries, torches, LED fittings, and power accessories.
           </div>
           <div>
-            <div>Phone: +91-98765-43210</div>
-            <div>Email: hello@brightarc.in</div>
+            <div>Phone: 0773772177</div>
+            <div>Email: jayasinghedistributors@gmail.com</div>
             <div>Mon-Sat, 9:30 AM - 7:30 PM</div>
           </div>
           <div class="footer-credit">
@@ -70,22 +74,29 @@ const {
       </div>
     </footer>
     <script is:inline>
-      const themeToggle = document.getElementById('theme-toggle');
-      const themeIcon = themeToggle.querySelector('.theme-icon');
+      const pill = document.getElementById('theme-toggle-pill');
+      const knobIcon = document.getElementById('knob-icon');
+      const toggleText = document.getElementById('toggle-text');
       
-      const updateIcon = (theme) => {
-        themeIcon.textContent = theme === 'dark' ? '🌙' : '☀️';
+      const updatePill = (theme) => {
+        if (theme === 'dark') {
+          knobIcon.textContent = '🌙';
+          toggleText.textContent = 'Day';
+        } else {
+          knobIcon.textContent = '☀️';
+          toggleText.textContent = 'Night';
+        }
       };
 
-      // Set initial icon state
-      updateIcon(document.documentElement.getAttribute('data-theme'));
+      // Set initial state
+      updatePill(document.documentElement.getAttribute('data-theme'));
 
-      themeToggle.addEventListener('click', () => {
+      pill.addEventListener('click', () => {
         const currentTheme = document.documentElement.getAttribute('data-theme');
         const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
         document.documentElement.setAttribute('data-theme', newTheme);
         localStorage.setItem('theme', newTheme);
-        updateIcon(newTheme);
+        updatePill(newTheme);
       });
     </script>
   </body>

@@ -1,0 +1,152 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const batteryRanges = [
+  { name: 'AA', icon: '🔋', desc: 'Standard double-A for remotes and toys' },
+  { name: 'AAA', icon: '🪫', desc: 'Triple-A for small electronics' },
+  { name: '9V', icon: '🔌', desc: 'High voltage for smoke detectors' },
+  { name: 'R14 (C)', icon: '📦', desc: 'Medium size for high-drain devices' },
+  { name: 'R20 (D)', icon: '🛢️', desc: 'Large size for flashlights and stereos' }
+];
+
+const torchRanges = [
+  { name: 'Mini LED', icon: '🔦', desc: 'Everyday carry pocket torches' },
+  { name: 'Heavy Duty', icon: '🚨', desc: 'Industrial grade spotlights' },
+  { name: 'Camping', icon: '🏕️', desc: 'Lanterns and tent lights' }
+];
+
+const ledRanges = [
+  { name: 'Panel Lights', icon: '🖼️', desc: 'Sleek ceiling lighting solutions' },
+  { name: 'High Bay', icon: '🏭', desc: 'Powerful lighting for warehouses' },
+  { name: 'Street Lights', icon: '🛣️', desc: 'Outdoor and municipal lighting' }
+];
+---
+
+<BaseLayout title="Catalog - JAYASINGHE & Co.">
+  <div class="hero">
+    <h1>Product Catalog</h1>
+    <p>Select a category to explore our specialized ranges.</p>
+  </div>
+
+  <div class="catalog-view">
+    <!-- Initial Selection View -->
+    <div id="selection-view" class="selection-grid">
+      <div class="selection-card" data-category="batteries">
+        <img src="/images/toshiba.png" alt="Toshiba Batteries" />
+        <div class="selection-overlay">
+          <h3>Batteries</h3>
+          <p>Toshiba Power Solutions</p>
+        </div>
+      </div>
+      
+      <div class="selection-card" data-category="torches">
+        <img src="/images/lumi.png" alt="Lumi Torches" />
+        <div class="selection-overlay">
+          <h3>Torches</h3>
+          <p>Lumi Professional Flashlights</p>
+        </div>
+      </div>
+
+      <div class="selection-card" data-category="led">
+        <img src="/images/neco.png" alt="Neco LED Lighting" />
+        <div class="selection-overlay">
+          <h3>LED Lighting</h3>
+          <p>Neco Architectural Illumination</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Category Detail Views (Hidden by default) -->
+    <div id="detail-view" style="display: none;">
+      <button id="back-to-selection" class="back-btn">
+        <span>← Back to Categories</span>
+      </button>
+
+      <!-- Batteries Content -->
+      <div class="category-content" id="content-batteries" style="display: none;">
+        <div class="section-head">
+          <div>
+            <h2>Battery Ranges</h2>
+            <p>Featuring Toshiba high-performance cells.</p>
+          </div>
+        </div>
+        <div class="range-grid">
+          {batteryRanges.map(range => (
+            <div class="range-card">
+              <span class="range-icon">{range.icon}</span>
+              <span class="range-name">{range.name}</span>
+              <span class="range-desc">{range.desc}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <!-- Torches Content -->
+      <div class="category-content" id="content-torches" style="display: none;">
+        <div class="section-head">
+          <div>
+            <h2>Torch Varieties</h2>
+            <p>Premium Lumi lighting equipment.</p>
+          </div>
+        </div>
+        <div class="range-grid">
+          {torchRanges.map(range => (
+            <div class="range-card">
+              <span class="range-icon">{range.icon}</span>
+              <span class="range-name">{range.name}</span>
+              <span class="range-desc">{range.desc}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <!-- LED Content -->
+      <div class="category-content" id="content-led" style="display: none;">
+        <div class="section-head">
+          <div>
+            <h2>LED Solutions</h2>
+            <p>Innovative Neco architectural lighting.</p>
+          </div>
+        </div>
+        <div class="range-grid">
+          {ledRanges.map(range => (
+            <div class="range-card">
+              <span class="range-icon">{range.icon}</span>
+              <span class="range-name">{range.name}</span>
+              <span class="range-desc">{range.desc}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script is:inline>
+    const selectionView = document.getElementById('selection-view');
+    const detailView = document.getElementById('detail-view');
+    const backBtn = document.getElementById('back-to-selection');
+    const cards = document.querySelectorAll('.selection-card');
+    const contents = document.querySelectorAll('.category-content');
+
+    cards.forEach(card => {
+      card.addEventListener('click', () => {
+        const category = card.getAttribute('data-category');
+        
+        selectionView.style.display = 'none';
+        detailView.style.display = 'block';
+        
+        contents.forEach(content => {
+          content.style.display = content.id === `content-${category}` ? 'block' : 'none';
+        });
+        
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    });
+
+    backBtn.addEventListener('click', () => {
+      detailView.style.display = 'none';
+      selectionView.style.display = 'grid';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  </script>
+</BaseLayout>
