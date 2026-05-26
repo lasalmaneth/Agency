@@ -13,7 +13,7 @@
   font-weight: 700;
   color: #ff2d2d;
   letter-spacing: 0.12em;
-  text-shadow: 0 2px 16px rgba(255,45,45,0.25), 0 1px 0 #fff;
+  text-shadow: 0 2px 16px rgba(255,45,45,0.25), 0 1px 0 var(--distributor-shadow);
   animation: distributor-glow 2.2s ease-in-out infinite alternate, distributor-fadein 1.2s cubic-bezier(0.23, 1, 0.32, 1) 1;
 }
 
@@ -24,7 +24,7 @@
     transform: scale(1);
   }
   100% {
-    text-shadow: 0 4px 32px #ff2d2d, 0 1px 0 #fff;
+    text-shadow: 0 4px 32px #ff2d2d, 0 1px 0 var(--distributor-shadow);
     letter-spacing: 0.18em;
     transform: scale(1.06);
   }
@@ -43,6 +43,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Manrope:wght@400;500;600;700&display=swap');
 
 :root {
+  /* Dark Theme (Default) */
   --bg: #0b1222;
   --panel: #111a2e;
   --muted: #9fb2d0;
@@ -51,6 +52,25 @@
   --text: #e8efff;
   --border: rgba(255, 255, 255, 0.08);
   --glow: rgba(106, 240, 255, 0.35);
+  --gradient-1: rgba(106, 240, 255, 0.08);
+  --gradient-2: rgba(255, 179, 71, 0.1);
+  --btn-shadow: rgba(106, 240, 255, 0.25);
+  --distributor-shadow: #fff;
+}
+
+[data-theme="light"] {
+  --bg: #f8fafc;
+  --panel: #ffffff;
+  --muted: #64748b;
+  --accent: #0ea5e9;
+  --accent-2: #f97316;
+  --text: #0f172a;
+  --border: rgba(0, 0, 0, 0.08);
+  --glow: rgba(14, 165, 233, 0.2);
+  --gradient-1: rgba(14, 165, 233, 0.05);
+  --gradient-2: rgba(249, 115, 22, 0.05);
+  --btn-shadow: rgba(14, 165, 233, 0.3);
+  --distributor-shadow: transparent;
 }
 
 * {
@@ -59,9 +79,16 @@
 
 body {
   margin: 0;
-  background: radial-gradient(120% 140% at 10% 20%, rgba(106, 240, 255, 0.08), transparent 55%),
-    radial-gradient(120% 140% at 80% 0%, rgba(255, 179, 71, 0.1), transparent 50%),
+  background: radial-gradient(120% 140% at 10% 20%, var(--gradient-1), transparent 55%),
+    radial-gradient(120% 140% at 80% 0%, var(--gradient-2), transparent 50%),
     var(--bg);
+  background-attachment: fixed;
+  color: var(--text);
+  font-family: 'Manrope', 'Segoe UI', sans-serif;
+  line-height: 1.5;
+  min-height: 100vh;
+  transition: background-color 0.4s ease, color 0.4s ease;
+}
   color: var(--text);
   font-family: 'Manrope', 'Segoe UI', sans-serif;
   line-height: 1.5;
@@ -104,9 +131,32 @@ header.site-header {
 
 .nav-links {
   display: flex;
+  align-items: center;
   gap: 20px;
   font-size: 0.95rem;
   color: var(--muted);
+}
+
+.theme-toggle {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0;
+  font-size: 1.2rem;
+}
+
+.theme-toggle:hover {
+  background: var(--bg);
+  border-color: var(--accent);
+  transform: scale(1.05);
 }
 
 .pill {
@@ -115,7 +165,7 @@ header.site-header {
   gap: 8px;
   padding: 10px 14px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--panel);
   border: 1px solid var(--border);
   color: var(--muted);
   font-weight: 600;
@@ -150,7 +200,7 @@ header.site-header {
   padding: 12px 16px;
   border-radius: 12px;
   border: 1px solid var(--border);
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--panel);
   color: var(--text);
   font-weight: 700;
   letter-spacing: -0.01em;
@@ -159,9 +209,9 @@ header.site-header {
 
 .btn.primary {
   background: linear-gradient(135deg, var(--accent), var(--accent-2));
-  color: #0b1222;
+  color: #fff;
   border: none;
-  box-shadow: 0 10px 30px rgba(106, 240, 255, 0.25);
+  box-shadow: 0 10px 30px var(--btn-shadow);
 }
 
 .btn:hover {
@@ -179,7 +229,7 @@ header.site-header {
   padding: 14px;
   border-radius: 14px;
   border: 1px solid var(--border);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01));
+  background: var(--panel);
 }
 
 .stat .label {
@@ -225,7 +275,7 @@ section {
   padding: 9px 13px;
   border-radius: 10px;
   border: 1px solid var(--border);
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--panel);
   color: var(--muted);
   font-weight: 600;
   cursor: pointer;
@@ -246,7 +296,7 @@ section {
 .card {
   border-radius: 14px;
   border: 1px solid var(--border);
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--panel);
   padding: 16px;
   position: relative;
   overflow: hidden;

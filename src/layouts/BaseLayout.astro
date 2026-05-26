@@ -13,6 +13,19 @@ const {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    <script is:inline>
+      // Initial theme setup to avoid FOUC
+      (() => {
+        const getTheme = () => {
+          if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
+            return localStorage.getItem('theme');
+          }
+          return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        };
+        const theme = getTheme();
+        document.documentElement.setAttribute('data-theme', theme);
+      })();
+    </script>
   </head>
   <body>
     <div class="shell">
@@ -25,6 +38,9 @@ const {
           <span>Catalog</span>
           <span>About</span>
           <span>Contact</span>
+          <button id="theme-toggle" class="theme-toggle" aria-label="Toggle Theme">
+            <span class="theme-icon">🌙</span>
+          </button>
         </div>
       </header>
     </div>
@@ -53,5 +69,24 @@ const {
         </div>
       </div>
     </footer>
+    <script is:inline>
+      const themeToggle = document.getElementById('theme-toggle');
+      const themeIcon = themeToggle.querySelector('.theme-icon');
+      
+      const updateIcon = (theme) => {
+        themeIcon.textContent = theme === 'dark' ? '🌙' : '☀️';
+      };
+
+      // Set initial icon state
+      updateIcon(document.documentElement.getAttribute('data-theme'));
+
+      themeToggle.addEventListener('click', () => {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+        updateIcon(newTheme);
+      });
+    </script>
   </body>
 </html>
