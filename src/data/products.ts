@@ -1,7 +1,7 @@
 export type Product = {
   slug: string;
   name: string;
-  category: 'Batteries' | 'Torches' | 'LED Lighting';
+  category: 'Batteries' | 'Torch products' | 'LED Lighting';
   price: string;
   stock: string;
   specs: string[];
