@@ -1,0 +1,109 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Contact - JAYASINGHE & Co.">
+  <div class="hero">
+    <h1>Get in Touch</h1>
+    <p>We're here to help with your energy and lighting needs.</p>
+  </div>
+
+  <div class="contact-container">
+    <a href="tel:0773772177" class="contact-card">
+      <span class="ringing-icon">🔔</span>
+      <span class="contact-info-text">0773772177</span>
+      <span class="contact-label">Call Us</span>
+    </a>
+
+    <a href="mailto:jayasinghedistributors@gmail.com" class="contact-card">
+      <span class="ringing-icon" style="animation: none;">✉️</span>
+      <span class="contact-info-text">jayasinghedistributors@gmail.com</span>
+      <span class="contact-label">Email Us</span>
+    </a>
+
+    <div class="contact-card">
+      <span class="ringing-icon" style="animation: none;">📍</span>
+      <span class="contact-info-text">50/52, Hirimbura cross road, Galle</span>
+      <span class="contact-label">Visit Us</span>
+    </div>
+  </div>
+
+  <div class="section-head" style="margin-top: 4rem;">
+    <div>
+      <h2>Interactive Support</h2>
+      <p>Ask our AI assistant any questions about our products or services.</p>
+    </div>
+  </div>
+
+  <div class="chatbot-section">
+    <div class="chat-header">
+      <div class="chat-header-info">
+        <div class="status-dot"></div>
+        <strong>JAYASINGHE Assistant</strong>
+      </div>
+      <span style="font-size: 0.8rem; opacity: 0.8;">Automated Support</span>
+    </div>
+    
+    <div id="chat-messages" class="chat-messages">
+      <div class="message bot">
+        Hello! I'm your JAYASINGHE & Co. assistant. How can I help you today? You can ask about our products, location, or store hours.
+      </div>
+    </div>
+
+    <form id="chat-form" class="chat-input-area">
+      <input type="text" id="chat-input" class="chat-input" placeholder="Type your question..." autocomplete="off">
+      <button type="submit" class="send-btn" aria-label="Send Message">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+      </button>
+    </form>
+  </div>
+
+  <script is:inline>
+    const chatForm = document.getElementById('chat-form');
+    const chatInput = document.getElementById('chat-input');
+    const chatMessages = document.getElementById('chat-messages');
+
+    const responses = [
+      { keywords: ['hi', 'hello', 'hey'], reply: "Hello! How can I assist you with JAYASINGHE & Co. products today?" },
+      { keywords: ['battery', 'batteries', 'toshiba'], reply: "We stock a full range of Toshiba batteries including AA, AAA, 9V, R14, and R20. You can view them in our Catalog section!" },
+      { keywords: ['price', 'cost', 'how much'], reply: "Our prices are very competitive! For bulk orders and specific pricing, please email us at jayasinghedistributors@gmail.com or request a quote via the homepage." },
+      { keywords: ['location', 'address', 'where'], reply: "We are located at 50/52, Hirimbura cross road, Galle. Come visit our store!" },
+      { keywords: ['hours', 'open', 'time'], reply: "Our store is open Monday to Saturday, from 9:30 AM to 7:30 PM." },
+      { keywords: ['torch', 'flashlight', 'lumi'], reply: "We carry premium Lumi LED torches. They are durable and high-output. Check the Catalog for details!" },
+      { keywords: ['led', 'lighting', 'neco'], reply: "Neco LED lighting is our specialty! We have panel lights, street lights, and high bays." },
+      { keywords: ['contact', 'phone', 'number'], reply: "You can reach us directly at 0773772177." },
+    ];
+
+    const addMessage = (text, sender) => {
+      const msgDiv = document.createElement('div');
+      msgDiv.className = `message ${sender}`;
+      msgDiv.textContent = text;
+      chatMessages.appendChild(msgDiv);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    };
+
+    const getBotResponse = (input) => {
+      const lowerInput = input.toLowerCase();
+      for (const item of responses) {
+        if (item.keywords.some(keyword => lowerInput.includes(keyword))) {
+          return item.reply;
+        }
+      }
+      return "I'm sorry, I didn't quite catch that. Could you please rephrase? You can ask about batteries, torches, LED lighting, our location, or opening hours.";
+    };
+
+    chatForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const text = chatInput.value.trim();
+      if (!text) return;
+
+      addMessage(text, 'user');
+      chatInput.value = '';
+
+      setTimeout(() => {
+        const reply = getBotResponse(text);
+        addMessage(reply, 'bot');
+      }, 600);
+    });
+  </script>
+</BaseLayout>
