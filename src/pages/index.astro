@@ -1,9 +1,6 @@
 ---
 import Layout from '../layouts/BaseLayout.astro';
-import ProductCard from '../components/ProductCard.astro';
-import products from '../data/products';
-
-const categories = ['All', 'Batteries', 'Torch products', 'LED Lighting'];
+import Layout from '../layouts/BaseLayout.astro';
 ---
 <Layout title="Jayasinghe & Co. | Batteries, Torches, LED" description="Reliable batteries and lighting for homes, offices, field teams, and retail.">
   <div class="animated-distributor">
@@ -44,28 +41,6 @@ const categories = ['All', 'Batteries', 'Torch products', 'LED Lighting'];
     </div>
   </section>
 
-  <section id="catalog">
-    <div class="section-head">
-      <div>
-        <h2>Catalog</h2>
-        <p>Select a category to filter items.</p>
-      </div>
-      <div class="filters">
-        {categories.map((category, idx) => (
-          <button class={`filter-btn${idx === 0 ? ' active' : ''}`} data-filter={category}>
-            {category}
-          </button>
-        ))}
-      </div>
-    </div>
-
-    <div class="grid" id="product-grid">
-      {products.map((product) => (
-        <ProductCard product={product} />
-      ))}
-    </div>
-  </section>
-
   <section id="contact">
     <div class="section-head">
       <div>
@@ -81,21 +56,4 @@ const categories = ['All', 'Batteries', 'Torch products', 'LED Lighting'];
     </div>
   </section>
 
-  <script>
-    const buttons = Array.from(document.querySelectorAll('[data-filter]'));
-    const cards = Array.from(document.querySelectorAll('[data-category]'));
-
-    buttons.forEach((btn) => { 
-      btn.addEventListener('click', () => {
-        buttons.forEach((b) => b.classList.remove('active'));
-        btn.classList.add('active');
-
-        const value = btn.dataset.filter;
-        cards.forEach((card) => {
-          const matches = value === 'All' || card.dataset.category === value;
-          card.style.display = matches ? 'block' : 'none';
-        });
-      });
-    });
-  </script>
 </Layout>
