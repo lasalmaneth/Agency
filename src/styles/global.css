@@ -681,11 +681,14 @@ footer {
 }
 
 .contact-info-text {
-  font-size: 1.25rem;
+  font-size: 1.1rem;
   font-weight: 700;
   color: var(--text);
   display: block;
   margin-bottom: 0.5rem;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  max-width: 100%;
 }
 
 .contact-label {
