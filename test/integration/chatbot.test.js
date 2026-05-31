@@ -43,5 +43,4 @@ async function testChatbotIntegration() {
     await driver.quit();
   }
 }
-//comment
 testChatbotIntegration();
