@@ -1,14 +1,20 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 
-const batteryRanges = [
-  { name: 'ABC Batteries', icon: '🏭', desc: 'Manufactured by JAYASINGHE & Co.' },
-  { name: 'Toshiba Batteries', icon: '🔋', desc: 'Toshiba high-performance cells' },
-  { name: 'AA', icon: '🔋', desc: 'Standard double-A for remotes and toys' },
-  { name: 'AAA', icon: '🪫', desc: 'Triple-A for small electronics' },
-  { name: '9V', icon: '🔌', desc: 'High voltage for smoke detectors' },
-  { name: 'R14 (C)', icon: '📦', desc: 'Medium size for high-drain devices' },
-  { name: 'R20 (D)', icon: '🛢️', desc: 'Large size for flashlights and stereos' }
+// Top-level battery types to show first
+const batteryTypes = [
+  { key: 'all', name: 'All Batteries', icon: '📚', desc: 'View our full battery range' },
+  { key: 'abc', name: 'ABC Batteries', icon: '🏭', desc: 'Manufactured by JAYASINGHE & Co.' },
+  { key: 'toshiba', name: 'Toshiba Batteries', icon: '🔋', desc: 'Toshiba high-performance cells' }
+];
+
+// Subcategories shown after selecting a top-level type
+const batterySubRanges = [
+  { id: 'aa', name: 'AA', icon: '🔋', desc: 'Standard double-A for remotes and toys' },
+  { id: 'aaa', name: 'AAA', icon: '🪫', desc: 'Triple-A for small electronics' },
+  { id: '9v', name: '9V', icon: '🔌', desc: 'High voltage for smoke detectors' },
+  { id: 'r14', name: 'R14 (C)', icon: '📦', desc: 'Medium size for high-drain devices' },
+  { id: 'r20', name: 'R20 (D)', icon: '🛢️', desc: 'Large size for flashlights and stereos' }
 ];
 
 const torchRanges = [
@@ -71,18 +77,34 @@ const ledRanges = [
       <div class="category-content" id="content-batteries" style="display: none;">
         <div class="section-head">
           <div>
-            <h2>Battery Ranges</h2>
-            <p>Featuring Toshiba high-performance cells.</p>
+            <h2 id="batteries-heading">Battery Ranges</h2>
+            <p id="batteries-subhead">Featuring Toshiba high-performance cells.</p>
           </div>
         </div>
-        <div class="range-grid">
-          {batteryRanges.map(range => (
-            <div class="range-card">
-              <span class="range-icon">{range.icon}</span>
-              <span class="range-name">{range.name}</span>
-              <span class="range-desc">{range.desc}</span>
+
+        <!-- Top-level battery types (shown first) -->
+        <div id="battery-types" class="range-grid types-grid">
+          {batteryTypes.map(type => (
+            <div class="range-card battery-type" data-key={type.key}>
+              <span class="range-icon">{type.icon}</span>
+              <span class="range-name">{type.name}</span>
+              <span class="range-desc">{type.desc}</span>
             </div>
           ))}
+        </div>
+
+        <!-- Subcategories (hidden until a type is selected) -->
+        <div id="battery-subranges" style="display: none;">
+          <button id="back-to-types" class="back-btn small">← Back to Battery Types</button>
+          <div class="range-grid subrange-grid">
+            {batterySubRanges.map(range => (
+              <div class="range-card subrange-card" data-id={range.id}>
+                <span class="range-icon">{range.icon}</span>
+                <span class="range-name">{range.name}</span>
+                <span class="range-desc">{range.desc}</span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -151,6 +173,37 @@ const ledRanges = [
     backBtn.addEventListener('click', () => {
       detailView.style.display = 'none';
       selectionView.style.display = 'grid';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    // Battery types -> show subcategories when a type is selected
+    const batteryTypesEls = document.querySelectorAll('.battery-type');
+    const batteryTypesWrap = document.getElementById('battery-types');
+    const batterySubranges = document.getElementById('battery-subranges');
+    const batteriesHeading = document.getElementById('batteries-heading');
+    const batteriesSubhead = document.getElementById('batteries-subhead');
+    const backToTypesBtn = document.getElementById('back-to-types');
+
+    batteryTypesEls.forEach(el => {
+      el.addEventListener('click', () => {
+        // update heading based on selection
+        const name = el.querySelector('.range-name').textContent;
+        batteriesHeading.textContent = `${name} — Categories`;
+        batteriesSubhead.textContent = `Select a size or type under ${name}.`;
+
+        // show subranges and hide top types
+        batteryTypesWrap.style.display = 'none';
+        batterySubranges.style.display = 'block';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    });
+
+    backToTypesBtn?.addEventListener('click', () => {
+      // restore original heading
+      batteriesHeading.textContent = 'Battery Ranges';
+      batteriesSubhead.textContent = 'Featuring Toshiba high-performance cells.';
+      batterySubranges.style.display = 'none';
+      batteryTypesWrap.style.display = 'grid';
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });
   </script>
