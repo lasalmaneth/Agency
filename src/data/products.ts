@@ -1,7 +1,7 @@
 export type Product = {
   slug: string;
   name: string;
-  category: 'Batteries' | 'Torch products' | 'LED Lighting';
+  category: 'Batteries' | 'Torch products' | 'Torches' | 'LED Lighting';
   price: string;
   stock: string;
   specs: string[];
@@ -71,6 +71,43 @@ const products: Product[] = [
     stock: '34 units',
     specs: ['10kV surge', 'Die-cast housing', 'Road-ready photometrics'],
     highlight: 'Outdoor-ready with long throw'
+  }
+  ,
+  {
+    slug: 'table-lamp-led',
+    name: 'Table Lamp LED (Adjustable)',
+    category: 'Torches',
+    price: 'Rs 1,250',
+    stock: '48 units',
+    specs: ['Warm/Cool modes', 'Adjustable arm', 'USB-A power'],
+    highlight: 'Perfect for desks and bedside'
+  },
+  {
+    slug: 'dolphin-torch',
+    name: 'Dolphin Torch (Ergo Slim)',
+    category: 'Torches',
+    price: 'Rs 1,050',
+    stock: '62 units',
+    specs: ['Ergonomic curved body', '2000 lm peak', 'IP65 water resistant'],
+    highlight: 'Comfort grip with focused beam'
+  },
+  {
+    slug: 'mini-pocket-torch',
+    name: 'Mini Pocket Torch 600 lm',
+    category: 'Torches',
+    price: 'Rs 590',
+    stock: '210 units',
+    specs: ['Lightweight alloy', 'AAA / rechargeable options', '3 modes'],
+    highlight: 'Carry-everyday compact torch'
+  },
+  {
+    slug: 'budget-torch-basic',
+    name: 'Budget Torch (Basic)',
+    category: 'Torches',
+    price: 'Rs 320',
+    stock: '430 units',
+    specs: ['Economy LED', 'Battery-included', 'Simple on/off'],
+    highlight: 'Reliable, low-cost everyday light'
   }
 ];
 
