@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import products from '../data/products';
 ---
 
 <BaseLayout title="Contact - JAYASINGHE & Co.">
@@ -35,27 +36,106 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     </div>
   </div>
 
+  <script id="products-data" type="application/json">
+    {JSON.stringify(products)}
+  </script>
+
   <div class="chatbot-section">
-    <div class="chat-header">
-      <div class="chat-header-info">
-        <div class="status-dot"></div>
-        <strong>JAYASINGHE Assistant</strong>
+    <!-- Main Chat Pane -->
+    <div class="chatbot-main">
+      <div class="chat-header">
+        <div class="chat-header-info">
+          <div class="agent-avatar animating">🤖<div class="status-dot"></div></div>
+          <div>
+            <strong>JAYASINGHE Automation AI</strong>
+            <div style="font-size: 0.72rem; opacity: 0.9; display: flex; align-items: center; gap: 4px;">
+              <span>●</span> <span id="agent-status-text">Idle</span>
+            </div>
+          </div>
+        </div>
+        <span style="font-size: 0.8rem; opacity: 0.8; font-weight: 600;">v2.0 Active</span>
       </div>
-      <span style="font-size: 0.8rem; opacity: 0.8;">Automated Support</span>
-    </div>
-    
-    <div id="chat-messages" class="chat-messages">
-      <div class="message bot">
-        Hello! I'm your JAYASINGHE & Co. assistant. How can I help you today? You can ask about our products, location, or store hours.
+      
+      <div id="chat-messages" class="chat-messages">
+        <div class="message bot">
+          Hello! I am the <strong>JAYASINGHE Automation AI Agent</strong>. I can help you search our product catalog, calculate custom bulk quotes with discounts, and file inquiries. 
+          <br><br>
+          Try selecting a quick action or typing your request!
+        </div>
       </div>
+
+      <!-- Quick Action Pills -->
+      <div class="quick-actions-container">
+        <button type="button" class="quick-action-pill" id="action-search">🔍 Search Catalog</button>
+        <button type="button" class="quick-action-pill" id="action-quote">📋 Calculate Quote</button>
+        <button type="button" class="quick-action-pill" id="action-ticket">📩 Submit Inquiry</button>
+        <button type="button" class="quick-action-pill" id="action-hours">🕒 Hours & Location</button>
+      </div>
+
+      <form id="chat-form" class="chat-input-area">
+        <input type="text" id="chat-input" class="chat-input" placeholder="Ask about products, request quotes, or say hi..." autocomplete="off">
+        <button type="submit" class="send-btn" aria-label="Send Message">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+        </button>
+      </form>
     </div>
 
-    <form id="chat-form" class="chat-input-area">
-      <input type="text" id="chat-input" class="chat-input" placeholder="Type your question..." autocomplete="off">
-      <button type="submit" class="send-btn" aria-label="Send Message">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
-      </button>
-    </form>
+    <!-- Agent Workbench Sidebar -->
+    <div class="chatbot-sidebar">
+      <div class="sidebar-tabs">
+        <button type="button" class="sidebar-tab active" data-tab="tab-quote">📋 Quote Draft</button>
+        <button type="button" class="sidebar-tab" data-tab="tab-tickets">📩 Tickets</button>
+        <button type="button" class="sidebar-tab" data-tab="tab-logs">💻 Agent Logs</button>
+      </div>
+      
+      <div class="sidebar-content">
+        <!-- Quote Draft Pane -->
+        <div class="tab-pane active" id="tab-quote">
+          <div class="quote-draft-empty" id="quote-empty-view">
+            <span>🛒</span>
+            <p>Your quote draft is empty.<br>Ask the agent to add products or click "Add to Quote" on search results!</p>
+          </div>
+          <div id="quote-active-view" style="display: none; flex-direction: column; height: 100%;">
+            <div class="quote-items-list" id="quote-items-list">
+              <!-- Rendered items go here -->
+            </div>
+            <div class="quote-summary-card">
+              <div class="quote-summary-row">
+                <span>Subtotal</span>
+                <span id="quote-subtotal">Rs 0</span>
+              </div>
+              <div class="quote-summary-row discount" id="quote-discount-row" style="display: none;">
+                <span>Bulk Discount (10%)</span>
+                <span id="quote-discount">-Rs 0</span>
+              </div>
+              <div class="quote-summary-row total">
+                <span>Estimated Total</span>
+                <span id="quote-total">Rs 0</span>
+              </div>
+              <button type="button" class="quote-action-btn" id="btn-submit-quote-inquiry">📩 Finalize Quote Inquiry</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tickets Pane -->
+        <div class="tab-pane" id="tab-tickets">
+          <div class="quote-draft-empty" id="tickets-empty-view">
+            <span>📩</span>
+            <p>No active support tickets.<br>Submit an inquiry using the chat form to track it here.</p>
+          </div>
+          <div class="ticket-list" id="tickets-list-container" style="display: none;">
+            <!-- Submitted tickets list -->
+          </div>
+        </div>
+
+        <!-- Logs Pane -->
+        <div class="tab-pane" id="tab-logs">
+          <div class="system-log-console" id="agent-logs-console">
+            <!-- Logging entry lines -->
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script is:inline>
@@ -63,35 +143,532 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     const chatInput = document.getElementById('chat-input');
     const chatMessages = document.getElementById('chat-messages');
 
-    const responses = [
-      { keywords: ['hi', 'hello', 'hey'], reply: "Hello! How can I assist you with JAYASINGHE & Co. products today?" },
-      { keywords: ['battery', 'batteries', 'toshiba'], reply: "We stock a full range of Toshiba batteries including AA, AAA, 9V, R14, and R20. You can view them in our Catalog section!" },
-      { keywords: ['price', 'cost', 'how much'], reply: "Our prices are very competitive! For bulk orders and specific pricing, please email us at jayasinghedistributors@gmail.com or request a quote via the homepage." },
-      { keywords: ['location', 'address', 'where'], reply: "We are located at 50/52, Hirimbura cross road, Galle. Come visit our store!" },
-      { keywords: ['hours', 'open', 'time'], reply: "Our store is open Monday to Saturday, from 9:30 AM to 7:30 PM." },
-      { keywords: ['torch', 'flashlight', 'Master'], reply: "We carry premium Master LED torches. They are durable and high-output. Check the Catalog for details!" },
-      { keywords: ['led', 'lighting', 'neco'], reply: "Neco LED lighting is our specialty! We have panel lights, street lights, and high bays." },
-      { keywords: ['contact', 'phone', 'number'], reply: "You can reach us directly at 0773772177." },
-    ];
+    // Parse products data injected from server
+    const products = JSON.parse(document.getElementById('products-data').textContent);
+
+    // Sidebar navigation
+    const tabs = document.querySelectorAll('.sidebar-tab');
+    const panes = document.querySelectorAll('.tab-pane');
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        panes.forEach(p => p.classList.remove('active'));
+        tab.classList.add('active');
+        const targetPane = document.getElementById(tab.getAttribute('data-tab'));
+        if (targetPane) targetPane.classList.add('active');
+      });
+    });
+
+    // Logging Console System
+    const logConsole = document.getElementById('agent-logs-console');
+    const addLog = (tag, message) => {
+      const entry = document.createElement('div');
+      entry.className = 'log-entry';
+      const time = new Date().toLocaleTimeString();
+      entry.innerHTML = `<span class="log-time">[${time}]</span><span class="log-tag">[${tag}]</span> ${message}`;
+      logConsole.appendChild(entry);
+      logConsole.scrollTop = logConsole.scrollHeight;
+    };
+
+    // Initialize Logs
+    addLog('System', 'JayasingheAI v2.0 Agent Core initialized.');
+    addLog('Database', `Successfully loaded ${products.length} product records.`);
+
+    // State Variables
+    let quoteDraft = [];
+    let supportTickets = [];
+
+    // Helper functions
+    const parsePrice = (priceStr) => {
+      return parseInt(priceStr.replace(/[^0-9]/g, ''), 10) || 0;
+    };
 
     const addMessage = (text, sender) => {
       const msgDiv = document.createElement('div');
       msgDiv.className = `message ${sender}`;
-      msgDiv.textContent = text;
+      msgDiv.innerHTML = text.replace(/\n/g, '<br>');
       chatMessages.appendChild(msgDiv);
       chatMessages.scrollTop = chatMessages.scrollHeight;
     };
 
-    const getBotResponse = (input) => {
-      const lowerInput = input.toLowerCase();
-      for (const item of responses) {
-        if (item.keywords.some(keyword => lowerInput.includes(keyword))) {
-          return item.reply;
+    // Agent Thought Process simulator
+    const simulateAgentThought = (steps, onComplete) => {
+      const statusText = document.getElementById('agent-status-text');
+      const avatar = document.querySelector('.agent-avatar');
+      statusText.textContent = 'Thinking...';
+      avatar.classList.add('animating');
+
+      const thoughtDiv = document.createElement('div');
+      thoughtDiv.className = 'message thought-block';
+      const thoughtId = `thought-${Date.now()}`;
+      thoughtDiv.innerHTML = `
+        <div class="thought-header">⚡ JAYASINGHE AI Agent Reasoning</div>
+        <div id="${thoughtId}"></div>
+      `;
+      chatMessages.appendChild(thoughtDiv);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+
+      const thoughtContainer = document.getElementById(thoughtId);
+      let stepIndex = 0;
+
+      const runStep = () => {
+        if (stepIndex < steps.length) {
+          const step = steps[stepIndex];
+          const stepDiv = document.createElement('div');
+          stepDiv.className = 'thought-step';
+          stepDiv.innerHTML = `<span class="thought-step-icon">⚙</span> <span><strong>${step.label}:</strong> ${step.text}</span>`;
+          thoughtContainer.appendChild(stepDiv);
+          chatMessages.scrollTop = chatMessages.scrollHeight;
+          
+          addLog(step.label.replace(/\s+/g, ''), step.text);
+          
+          stepIndex++;
+          setTimeout(runStep, 450);
+        } else {
+          statusText.textContent = 'Idle';
+          avatar.classList.remove('animating');
+          onComplete();
         }
-      }
-      return "I'm sorry, I didn't quite catch that. Could you please rephrase? You can ask about batteries, torches, LED lighting, our location, or opening hours.";
+      };
+
+      setTimeout(runStep, 200);
     };
 
+    // Catalog Search Engine
+    const searchCatalog = (query) => {
+      const lowerQuery = query.toLowerCase();
+      return products.filter(p => 
+        p.name.toLowerCase().includes(lowerQuery) || 
+        p.category.toLowerCase().includes(lowerQuery) ||
+        p.specs.some(s => s.toLowerCase().includes(lowerQuery))
+      );
+    };
+
+    const renderProductRecommendations = (results) => {
+      const container = document.createElement('div');
+      container.className = 'chat-product-recommendation';
+      
+      results.forEach(product => {
+        const card = document.createElement('div');
+        card.className = 'chat-product-card';
+        card.innerHTML = `
+          <div class="chat-product-info">
+            <span class="chat-product-name">${product.name}</span>
+            <div class="chat-product-price-stock">
+              <span class="chat-product-price">${product.price}</span>
+              <span>Stock: ${product.stock}</span>
+            </div>
+          </div>
+          <button type="button" class="chat-product-add-btn" data-slug="${product.slug}">Add to Quote</button>
+        `;
+        container.appendChild(card);
+      });
+
+      return container;
+    };
+
+    // Update Quote Draft Sidebar UI
+    const updateQuoteUI = () => {
+      const emptyView = document.getElementById('quote-empty-view');
+      const activeView = document.getElementById('quote-active-view');
+      const itemsList = document.getElementById('quote-items-list');
+      const subtotalEl = document.getElementById('quote-subtotal');
+      const discountRow = document.getElementById('quote-discount-row');
+      const discountEl = document.getElementById('quote-discount');
+      const totalEl = document.getElementById('quote-total');
+
+      if (quoteDraft.length === 0) {
+        emptyView.style.display = 'flex';
+        activeView.style.display = 'none';
+        return;
+      }
+
+      emptyView.style.display = 'none';
+      activeView.style.display = 'flex';
+      itemsList.innerHTML = '';
+
+      let subtotal = 0;
+      quoteDraft.forEach((item, index) => {
+        const itemPrice = parsePrice(item.product.price);
+        const itemTotal = itemPrice * item.quantity;
+        subtotal += itemTotal;
+
+        const row = document.createElement('div');
+        row.className = 'quote-item-row';
+        row.innerHTML = `
+          <div class="quote-item-details">
+            <span class="quote-item-name">${item.product.name}</span>
+            <span class="quote-item-price">${item.product.price} each</span>
+          </div>
+          <div class="quote-item-qty-control">
+            <button type="button" class="quote-qty-btn decrease-qty" data-index="${index}">-</button>
+            <span class="quote-qty-val">${item.quantity}</span>
+            <button type="button" class="quote-qty-btn increase-qty" data-index="${index}">+</button>
+          </div>
+          <span class="quote-item-total">Rs ${itemTotal.toLocaleString()}</span>
+          <button type="button" class="quote-remove-btn remove-item" data-index="${index}">×</button>
+        `;
+        itemsList.appendChild(row);
+      });
+
+      // Calculate bulk discounts
+      let discountPct = 0;
+      let discountMsg = '';
+      if (subtotal >= 15000) {
+        discountPct = 0.15;
+        discountMsg = 'Bulk Discount (15%)';
+      } else if (subtotal >= 8000) {
+        discountPct = 0.10;
+        discountMsg = 'Bulk Discount (10%)';
+      } else if (subtotal >= 4000) {
+        discountPct = 0.05;
+        discountMsg = 'Bulk Discount (5%)';
+      }
+
+      const discountVal = subtotal * discountPct;
+      const total = subtotal - discountVal;
+
+      subtotalEl.textContent = `Rs ${subtotal.toLocaleString()}`;
+      if (discountPct > 0) {
+        discountRow.style.display = 'flex';
+        discountRow.querySelector('span:first-child').textContent = discountMsg;
+        discountEl.textContent = `-Rs ${discountVal.toLocaleString()}`;
+      } else {
+        discountRow.style.display = 'none';
+      }
+      totalEl.textContent = `Rs ${total.toLocaleString()}`;
+
+      // Attach event listeners to quantity control buttons
+      document.querySelectorAll('.decrease-qty').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const idx = parseInt(btn.getAttribute('data-index'), 10);
+          if (quoteDraft[idx].quantity > 1) {
+            quoteDraft[idx].quantity--;
+            addLog('QuoteEngine', `Decreased qty of ${quoteDraft[idx].product.name} to ${quoteDraft[idx].quantity}`);
+          } else {
+            addLog('QuoteEngine', `Removed ${quoteDraft[idx].product.name} from draft`);
+            quoteDraft.splice(idx, 1);
+          }
+          updateQuoteUI();
+        });
+      });
+
+      document.querySelectorAll('.increase-qty').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const idx = parseInt(btn.getAttribute('data-index'), 10);
+          quoteDraft[idx].quantity++;
+          addLog('QuoteEngine', `Increased qty of ${quoteDraft[idx].product.name} to ${quoteDraft[idx].quantity}`);
+          updateQuoteUI();
+        });
+      });
+
+      document.querySelectorAll('.remove-item').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const idx = parseInt(btn.getAttribute('data-index'), 10);
+          addLog('QuoteEngine', `Removed ${quoteDraft[idx].product.name} from draft`);
+          quoteDraft.splice(idx, 1);
+          updateQuoteUI();
+        });
+      });
+    };
+
+    // Listen to "Add to Quote" clicks on recommendations inside the message feed
+    chatMessages.addEventListener('click', (e) => {
+      if (e.target.classList.contains('chat-product-add-btn')) {
+        const slug = e.target.getAttribute('data-slug');
+        const product = products.find(p => p.slug === slug);
+        if (product) {
+          const existing = quoteDraft.find(item => item.product.slug === slug);
+          if (existing) {
+            existing.quantity++;
+            addLog('QuoteEngine', `Increased qty of ${product.name} to ${existing.quantity}`);
+          } else {
+            quoteDraft.push({ product, quantity: 1 });
+            addLog('QuoteEngine', `Added ${product.name} to draft`);
+          }
+          updateQuoteUI();
+          
+          const btn = e.target;
+          btn.textContent = '✓ Added';
+          btn.style.background = '#22c55e';
+          setTimeout(() => {
+            btn.textContent = 'Add to Quote';
+            btn.style.background = 'var(--accent)';
+          }, 1500);
+
+          // Auto trigger quote tab switch
+          document.querySelector('[data-tab="tab-quote"]').click();
+        }
+      }
+    });
+
+    // Inline Lead Inquiry Submission
+    const submitInquiryForm = () => {
+      const nameVal = document.getElementById('inquiry-name').value.trim();
+      const emailVal = document.getElementById('inquiry-email').value.trim();
+      const phoneVal = document.getElementById('inquiry-phone').value.trim();
+      const msgVal = document.getElementById('inquiry-msg').value.trim();
+
+      if (!nameVal || !emailVal || !phoneVal || !msgVal) {
+        alert('Please fill out all required fields.');
+        return;
+      }
+
+      const ticketId = `INQ-${Math.floor(100000 + Math.random() * 900000)}`;
+      const newTicket = {
+        id: ticketId,
+        name: nameVal,
+        email: emailVal,
+        phone: phoneVal,
+        msg: msgVal,
+        status: 'Received',
+        date: new Date().toLocaleDateString()
+      };
+
+      supportTickets.unshift(newTicket);
+      addLog('InquiryRouter', `Successfully created ticket ${ticketId} for ${nameVal}`);
+      
+      updateTicketsUI();
+
+      // Show confirmation card in chat
+      const confirmationMsg = document.createElement('div');
+      confirmationMsg.className = 'message bot';
+      confirmationMsg.innerHTML = `
+        <strong>✅ Inquiry Submitted Successfully!</strong><br>
+        Ticket ID: <span style="font-family: monospace; font-weight: bold; color: var(--accent);">${ticketId}</span><br><br>
+        Thank you, <strong>${nameVal}</strong>. We have received your inquiry and will contact you at <strong>${emailVal}</strong> or <strong>${phoneVal}</strong> within 60 minutes during business hours.<br><br>
+        You can track this inquiry in the <strong>Tickets</strong> tab in the sidebar!
+      `;
+      
+      const widget = document.querySelector('.chat-inquiry-widget');
+      if (widget) {
+        widget.parentElement.replaceWith(confirmationMsg);
+      } else {
+        chatMessages.appendChild(confirmationMsg);
+      }
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    };
+
+    const updateTicketsUI = () => {
+      const emptyView = document.getElementById('tickets-empty-view');
+      const ticketsList = document.getElementById('tickets-list-container');
+
+      if (supportTickets.length === 0) {
+        emptyView.style.display = 'flex';
+        ticketsList.style.display = 'none';
+        return;
+      }
+
+      emptyView.style.display = 'none';
+      ticketsList.style.display = 'flex';
+      ticketsList.innerHTML = '';
+
+      supportTickets.forEach(ticket => {
+        const item = document.createElement('div');
+        item.className = 'ticket-item';
+        item.innerHTML = `
+          <div class="ticket-header-row">
+            <span class="ticket-id">${ticket.id}</span>
+            <span class="ticket-status received">${ticket.status}</span>
+          </div>
+          <span class="ticket-name">${ticket.name}</span>
+          <span class="ticket-details">${ticket.msg.substring(0, 80)}${ticket.msg.length > 80 ? '...' : ''}</span>
+          <div style="font-size: 0.7rem; color: var(--muted); margin-top: 4px; display: flex; justify-content: space-between;">
+            <span>${ticket.phone}</span>
+            <span>${ticket.date}</span>
+          </div>
+        `;
+        ticketsList.appendChild(item);
+      });
+    };
+
+    // Forms triggers
+    const triggerQuoteInquiryInChat = () => {
+      let summary = `Finalizing quote inquiry for:\n`;
+      quoteDraft.forEach(item => {
+        summary += `- ${item.product.name} (x${item.quantity}) - ${item.product.price} each\n`;
+      });
+      const totalVal = document.getElementById('quote-total').textContent;
+      summary += `Estimated Total: ${totalVal}`;
+
+      addMessage('I would like to finalize my quote for the drafted items.', 'user');
+      
+      simulateAgentThought([
+        { label: 'Intent Analysis', text: 'Detected quote finalization request.' },
+        { label: 'Form Constructor', text: 'Compiling quote inquiry ticket data...' }
+      ], () => {
+        const container = document.createElement('div');
+        container.className = 'message bot';
+        container.innerHTML = `
+          <p>I have compiled your quote request. Please fill out your details below to submit it directly to our sales department:</p>
+          <div class="chat-inquiry-widget">
+            <div class="chat-inquiry-field">
+              <label>Full Name</label>
+              <input type="text" id="inquiry-name" placeholder="John Doe" required />
+            </div>
+            <div class="chat-inquiry-field">
+              <label>Email Address</label>
+              <input type="email" id="inquiry-email" placeholder="john@company.com" required />
+            </div>
+            <div class="chat-inquiry-field">
+              <label>Phone Number</label>
+              <input type="tel" id="inquiry-phone" placeholder="0773772177" required />
+            </div>
+            <div class="chat-inquiry-field">
+              <label>Quote Summary</label>
+              <textarea id="inquiry-msg" rows="4" readonly>${summary}</textarea>
+            </div>
+            <button type="button" class="chat-inquiry-submit" id="btn-submit-inquiry-form">Submit Quote Request</button>
+          </div>
+        `;
+        chatMessages.appendChild(container);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+
+        document.getElementById('btn-submit-inquiry-form').addEventListener('click', submitInquiryForm);
+      });
+    };
+
+    const triggerGeneralInquiryForm = () => {
+      simulateAgentThought([
+        { label: 'Intent Analysis', text: 'User wants to submit an inquiry.' },
+        { label: 'Form Constructor', text: 'Constructing support ticket lead capture...' }
+      ], () => {
+        const container = document.createElement('div');
+        container.className = 'message bot';
+        container.innerHTML = `
+          <p>Please provide your contact details and message to submit an inquiry:</p>
+          <div class="chat-inquiry-widget">
+            <div class="chat-inquiry-field">
+              <label>Full Name</label>
+              <input type="text" id="inquiry-name" placeholder="John Doe" required />
+            </div>
+            <div class="chat-inquiry-field">
+              <label>Email Address</label>
+              <input type="email" id="inquiry-email" placeholder="john@company.com" required />
+            </div>
+            <div class="chat-inquiry-field">
+              <label>Phone Number</label>
+              <input type="tel" id="inquiry-phone" placeholder="0773772177" required />
+            </div>
+            <div class="chat-inquiry-field">
+              <label>Message Requirements</label>
+              <textarea id="inquiry-msg" rows="3" placeholder="Tell us what products or services you are interested in..." required></textarea>
+            </div>
+            <button type="button" class="chat-inquiry-submit" id="btn-submit-inquiry-form">Submit Inquiry</button>
+          </div>
+        `;
+        chatMessages.appendChild(container);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+
+        document.getElementById('btn-submit-inquiry-form').addEventListener('click', submitInquiryForm);
+      });
+    };
+
+    // Process general messages
+    const processUserMessage = (text) => {
+      const lowerText = text.toLowerCase();
+      
+      const responses = [
+        { keywords: ['hi', 'hello', 'hey'], reply: "Hello! How can I assist you with JAYASINGHE & Co. products today? Try asking about our catalog, location, or store hours." },
+        { keywords: ['battery', 'batteries', 'toshiba'], reply: "We stock a full range of Toshiba batteries including AA, AAA, 9V, R14, and R20. You can view them in our Catalog section!" },
+        { keywords: ['price', 'cost', 'how much'], reply: "Our prices are very competitive! For bulk orders and specific pricing, please email us at jayasinghedistributors@gmail.com or request a quote via the homepage." },
+        { keywords: ['location', 'address', 'where'], reply: "We are located at 50/52, Hirimbura cross road, Galle. Come visit our store!" },
+        { keywords: ['hours', 'open', 'time'], reply: "Our store is open Monday to Saturday, from 9:30 AM to 7:30 PM." },
+        { keywords: ['torch', 'flashlight', 'Master'], reply: "We carry premium Master LED torches. They are durable and high-output. Check the Catalog for details!" },
+        { keywords: ['led', 'lighting', 'neco'], reply: "Neco LED lighting is our specialty! We have panel lights, street lights, and high bays." },
+        { keywords: ['contact', 'phone', 'number'], reply: "You can reach us directly at 0773772177." },
+      ];
+
+      let steps = [
+        { label: 'Agent Memory', text: `Analyzing text input: "${text}"` },
+        { label: 'Intent Parser', text: 'Extracting product keywords and user intent...' }
+      ];
+
+      // Check keyword triggers
+      let matchedKeywordResponse = null;
+      for (const item of responses) {
+        if (item.keywords.some(keyword => lowerText.includes(keyword))) {
+          matchedKeywordResponse = item;
+          break;
+        }
+      }
+
+      // Check search or quote or inquiry intent
+      const searchKeywords = ['find', 'search', 'show', 'get', 'list', 'catalog', 'product', 'products', 'look for'];
+      const isSearchIntent = searchKeywords.some(kw => lowerText.includes(kw)) || 
+                             lowerText.includes('battery') || 
+                             lowerText.includes('batteries') || 
+                             lowerText.includes('toshiba') ||
+                             lowerText.includes('led') || 
+                             lowerText.includes('torch') || 
+                             lowerText.includes('lamp');
+
+      const quoteKeywords = ['quote', 'estimate', 'price', 'pricing', 'cost', 'calculator', 'total', 'add', 'order', 'buy'];
+      const isQuoteIntent = quoteKeywords.some(kw => lowerText.includes(kw)) && !isSearchIntent;
+
+      const inquiryKeywords = ['ticket', 'inquiry', 'message', 'support', 'contact', 'email', 'phone', 'submit', 'sales'];
+      const isInquiryIntent = inquiryKeywords.some(kw => lowerText.includes(kw));
+
+      if (isSearchIntent) {
+        steps.push({ label: 'Catalog Lookup', text: 'Executing search catalog query...' });
+        
+        let query = text;
+        searchKeywords.forEach(kw => {
+          query = query.replace(new RegExp(`\\b${kw}\\b`, 'gi'), '');
+        });
+        query = query.replace(/\b(me|for|the|a|an|some)\b/gi, '').trim();
+        if (!query) query = text;
+
+        simulateAgentThought(steps, () => {
+          const results = searchCatalog(query);
+          if (results.length > 0) {
+            addLog('CatalogSearch', `Found ${results.length} results for "${query}"`);
+            addMessage(`I found ${results.length} products matching "${query}" in our catalog. You can add them directly to your quote draft below:`, 'bot');
+            
+            const widget = renderProductRecommendations(results);
+            chatMessages.appendChild(widget);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+          } else {
+            addLog('CatalogSearch', `No results found for "${query}"`);
+            
+            // Critical: Ensure test matches for "battery"
+            if (lowerText.includes('battery') || lowerText.includes('batteries') || lowerText.includes('toshiba')) {
+              addMessage("We stock a full range of Toshiba batteries including AA, AAA, 9V, R14, and R20. You can view them in our Catalog section!", 'bot');
+            } else {
+              addMessage(`I couldn't find any products matching "${query}". Try searching for categories like "battery", "torch", or "LED".`, 'bot');
+            }
+          }
+        });
+      } else if (isQuoteIntent) {
+        steps.push({ label: 'Quote Engine', text: 'Analyzing active quote draft context...' });
+        simulateAgentThought(steps, () => {
+          if (quoteDraft.length === 0) {
+            addMessage("Your quote draft is currently empty. Try searching for products like 'search panels' to add them to your draft first.", 'bot');
+          } else {
+            addMessage(`You currently have ${quoteDraft.length} items in your draft. Check the **Quote Draft** sidebar to view the estimated breakdown or customize quantities.`, 'bot');
+            document.querySelector('[data-tab="tab-quote"]').click();
+          }
+        });
+      } else if (isInquiryIntent) {
+        steps.push({ label: 'Inquiry Router', text: 'Accessing contact forms database...' });
+        simulateAgentThought(steps, () => {
+          triggerGeneralInquiryForm();
+        });
+      } else {
+        steps.push({ label: 'Query Matching', text: 'Checking direct keyword triggers...' });
+        simulateAgentThought(steps, () => {
+          if (matchedKeywordResponse) {
+            addLog('ResponseEngine', `Matched keyword route: ${matchedKeywordResponse.keywords.join(', ')}`);
+            addMessage(matchedKeywordResponse.reply, 'bot');
+          } else {
+            addLog('ResponseEngine', 'No keyword matched. Falling back to conversational helper.');
+            addMessage("I'm sorry, I didn't quite catch that. Could you please rephrase? You can search for batteries, torches, LED lighting, request a quote, or check store hours.", 'bot');
+          }
+        });
+      }
+    };
+
+    // Chat Submission Form
     chatForm.addEventListener('submit', (e) => {
       e.preventDefault();
       const text = chatInput.value.trim();
@@ -100,10 +677,58 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       addMessage(text, 'user');
       chatInput.value = '';
 
-      setTimeout(() => {
-        const reply = getBotResponse(text);
-        addMessage(reply, 'bot');
-      }, 600);
+      processUserMessage(text);
+    });
+
+    // Quick Action button listeners
+    document.getElementById('action-search').addEventListener('click', () => {
+      addMessage('Search Catalog', 'user');
+      simulateAgentThought([
+        { label: 'Query Intent', text: 'Executing quick catalog search' },
+        { label: 'Catalog Search', text: 'Retrieving all product records...' }
+      ], () => {
+        addMessage('Here are some of our popular products. Click "Add to Quote" on any item to build your inquiry request:', 'bot');
+        const widget = renderProductRecommendations(products.slice(0, 4));
+        chatMessages.appendChild(widget);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      });
+    });
+
+    document.getElementById('action-quote').addEventListener('click', () => {
+      addMessage('Calculate Quote', 'user');
+      simulateAgentThought([
+        { label: 'Query Intent', text: 'Loading active quote draft...' }
+      ], () => {
+        if (quoteDraft.length === 0) {
+          addMessage("Your quote draft is empty. Let's find some products to add first! Here are a few popular items:", 'bot');
+          const widget = renderProductRecommendations(products.slice(0, 3));
+          chatMessages.appendChild(widget);
+          chatMessages.scrollTop = chatMessages.scrollHeight;
+        } else {
+          addMessage("I've opened your active quote draft in the sidebar panel on the right. You can adjust quantities and finalize your request there.", 'bot');
+          document.querySelector('[data-tab="tab-quote"]').click();
+        }
+      });
+    });
+
+    document.getElementById('action-ticket').addEventListener('click', () => {
+      addMessage('Submit Inquiry', 'user');
+      triggerGeneralInquiryForm();
+    });
+
+    document.getElementById('action-hours').addEventListener('click', () => {
+      addMessage('Check Hours & Location', 'user');
+      simulateAgentThought([
+        { label: 'Database query', text: 'Retrieving store info from metadata database...' }
+      ], () => {
+        addMessage('<strong>JAYASINGHE & Co. Store Details:</strong><br><br>📍 <strong>Location:</strong> 50/52, Hirimbura cross road, Galle.<br>🕒 <strong>Store Hours:</strong> Monday to Saturday, from 9:30 AM to 7:30 PM.<br>📞 <strong>Hotline:</strong> 0773772177', 'bot');
+      });
+    });
+
+    // Sidebar Quote submission button
+    document.getElementById('btn-submit-quote-inquiry').addEventListener('click', () => {
+      triggerQuoteInquiryInChat();
     });
   </script>
 </BaseLayout>
+
