@@ -82,8 +82,8 @@ const categories = ['All', 'Batteries', 'Torches', 'LED Lighting'];
   </section>
 
   <script>
-    const buttons = Array.from(document.querySelectorAll('[data-filter]'));
-    const cards = Array.from(document.querySelectorAll('[data-category]'));
+    const buttons = Array.from(document.querySelectorAll('[data-filter]')) as HTMLButtonElement[];
+    const cards = Array.from(document.querySelectorAll('[data-category]')) as HTMLElement[];
 
     buttons.forEach((btn) => {
       btn.addEventListener('click', () => {

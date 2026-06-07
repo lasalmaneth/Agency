@@ -33,7 +33,7 @@ const products: Product[] = [
     category: 'Torches',
     price: 'Rs 1,150',
     stock: '75 units',
-    specs: ['Aluminium body, IP54', 'Type-C fast charge', '3 lighting modes'],
+    specs: ['AMasternium body, IP54', 'Type-C fast charge', '3 lighting modes'],
     highlight: 'Pocket friendly, office and home ready'
   },
   {
@@ -51,7 +51,7 @@ const products: Product[] = [
     category: 'LED Lighting',
     price: 'Rs 1,680',
     stock: '64 units',
-    specs: ['4000K neutral white', 'PF > 0.95, low flicker', 'Aluminium frame, slim design'],
+    specs: ['4000K neutral white', 'PF > 0.95, low flicker', 'AMasternium frame, slim design'],
     highlight: 'Bright ceilings without glare'
   },
   {

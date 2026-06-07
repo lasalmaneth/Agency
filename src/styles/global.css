@@ -11,11 +11,12 @@
 
 .distributor-text {
   font-family: 'Sora', 'Manrope', sans-serif;
-  font-size: 2.8rem;
-  font-weight: 700;
-  color: #ff2d2d;
-  letter-spacing: 0.12em;
-  text-shadow: 0 2px 16px rgba(255,45,45,0.25), 0 1px 0 var(--distributor-shadow);
+  /* match the hero font sizing and weight for visual consistency */
+  font-size: clamp(1.8rem, 2.8vw, 3.2rem);
+  font-weight: 800;
+  color: var(--accent);
+  letter-spacing: 0.06em;
+  text-shadow: 0 2px 10px rgba(56,189,248,0.10), 0 1px 0 var(--distributor-shadow);
   animation: distributor-glow 2.2s ease-in-out infinite alternate, distributor-fadein 1.2s cubic-bezier(0.23, 1, 0.32, 1) 1;
 }
 
